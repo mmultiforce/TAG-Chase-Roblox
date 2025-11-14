@@ -93,39 +93,39 @@ end
 
 -- Initialize game
 local function initializeGame()
-    print("Initializing TAG/CHASE game...")
-    
-    -- Create game structure
-    local gameFolder = createGameStructure()
-    
-    -- Load modules
-    loadGameModules()
-    
-    -- Setup player scripts
-    setupPlayerScripts()
-    
-    -- Wait for game manager to be ready
-    local gameManager = script.Parent:FindFirstChild("TagChaseGameManager")
-    if gameManager then
-        -- Create and start game manager
-        local GameManager = require(gameManager)
-        local gameManagerInstance = GameManager.new()
-        
-        -- Initialize spawn manager first
-        local SpawnManager = require(script.Parent:SpawnManager)
-        SpawnManager.initialize()
-        
-        -- Initialize UI manager
-        local UIManager = require(script.Parent:UIManager)
-        UIManager.initialize()
-        
-        -- Start the game
-        gameManagerInstance:initialize()
-        
-        print("Game manager initialized and started!")
-    else
-        warn("Failed to initialize game - Game Manager not found")
-    end
+     print("Initializing TAG/CHASE game...")
+
+     -- Create game structure
+     local gameFolder = createGameStructure()
+
+     -- Load modules
+     loadGameModules()
+
+     -- Initialize UI manager FIRST - before client scripts
+     local UIManager = require(script.Parent:FindFirstChild("UIManager"))
+     UIManager.initialize()
+
+     -- Setup player scripts after UI manager is ready
+     setupPlayerScripts()
+
+     -- Wait for game manager to be ready
+     local gameManager = script.Parent:FindFirstChild("TagChaseGameManager")
+     if gameManager then
+         -- Create and start game manager
+         local GameManager = require(gameManager)
+         local gameManagerInstance = GameManager.new()
+
+         -- Initialize spawn manager first
+         local SpawnManager = require(script.Parent:FindFirstChild("SpawnManager"))
+         SpawnManager.initialize()
+
+         -- Start the game
+         gameManagerInstance:initialize()
+
+         print("Game manager initialized and started!")
+     else
+         warn("Failed to initialize game - Game Manager not found")
+     end
 end
 
 -- Setup teams (optional, for future expansion)

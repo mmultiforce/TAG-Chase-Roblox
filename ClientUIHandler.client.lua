@@ -8,11 +8,33 @@ local StarterGui = game:GetService("StarterGui")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Get remote events
-local remoteEvents = ReplicatedStorage:WaitForChild("TagChaseRemoteEvents")
-local updateUIEvent = remoteEvents:WaitForChild("UpdateUI")
-local announcementEvent = remoteEvents:WaitForChild("ShowAnnouncement")
-local scoreboardEvent = remoteEvents:WaitForChild("ShowScoreboard")
+-- Get remote events with timeout and error handling
+local remoteEvents
+local updateUIEvent
+local announcementEvent
+local scoreboardEvent
+
+local function waitForRemoteEvents()
+    local maxWait = 30 -- 30 second timeout
+    local startTime = tick()
+    
+    while not remoteEvents and (tick() - startTime) < maxWait do
+        remoteEvents = ReplicatedStorage:FindFirstChild("TagChaseRemoteEvents")
+        if not remoteEvents then
+            task.wait(0.1)
+        end
+    end
+    
+    if remoteEvents then
+        updateUIEvent = remoteEvents:FindFirstChild("UpdateUI")
+        announcementEvent = remoteEvents:FindFirstChild("ShowAnnouncement")
+        scoreboardEvent = remoteEvents:FindFirstChild("ShowScoreboard")
+    else
+        warn("Failed to find TagChaseRemoteEvents after " .. maxWait .. " seconds")
+    end
+end
+
+waitForRemoteEvents()
 
 -- UI references
 local tagChaseUI = nil
@@ -211,9 +233,23 @@ local function showScoreboard(scoreboardData)
 end
 
 -- Connect remote events
-updateUIEvent.OnClientEvent:Connect(updateUI)
-announcementEvent.OnClientEvent:Connect(showAnnouncement)
-scoreboardEvent.OnClientEvent:Connect(showScoreboard)
+if updateUIEvent then
+    updateUIEvent.OnClientEvent:Connect(updateUI)
+else
+    warn("UpdateUI event not found")
+end
+
+if announcementEvent then
+    announcementEvent.OnClientEvent:Connect(showAnnouncement)
+else
+    warn("ShowAnnouncement event not found")
+end
+
+if scoreboardEvent then
+    scoreboardEvent.OnClientEvent:Connect(showScoreboard)
+else
+    warn("ShowScoreboard event not found")
+end
 
 -- Initialize UI when player joins
 initializeUI()
