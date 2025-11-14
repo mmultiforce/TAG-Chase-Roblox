@@ -372,39 +372,56 @@ function TagChaseGameManager:checkGameEndCondition()
 end
 
 function TagChaseGameManager:endGame(reason)
-    print("Game ending: " .. reason)
-    
-    self.gameState.isActive = false
-    
-    -- Calculate final survival times for remaining survivors
-    local currentTime = tick()
-    for userId, playerData in pairs(self.players) do
-        if playerData.role == "Survivor" and playerData.player.Parent == Players then
-            -- Calculate total survival time for survivors who made it to the end
-            local totalSurvivalTime = currentTime - playerData.survivalStartTime
-            if not self.scoreboard[userId] then
-                self.scoreboard[userId] = {
-                    playerName = playerData.player.Name,
-                    catches = 0,
-                    caught = 0,
-                    survivalTime = 0,
-                    finalRole = "Survivor"
-                }
-            end
-            self.scoreboard[userId].survivalTime = totalSurvivalTime
-            self.scoreboard[userId].finalRole = "Winner - Survived!"
-        end
-    end
-    
-    -- Show final scoreboard with survival times
-    UIManager.showFinalScoreboard(self.scoreboard)
-    
-    -- Reset after 15 seconds
-    task.wait(15)
-    
-    if #Players:GetPlayers() >= 2 then
-        self:startGame()
-    end
+     print("Game ending: " .. reason)
+
+     self.gameState.isActive = false
+
+     -- Calculate final survival times for remaining survivors
+     local currentTime = tick()
+     for userId, playerData in pairs(self.players) do
+         if playerData.role == "Survivor" and playerData.player.Parent == Players then
+             -- Calculate total survival time for survivors who made it to the end
+             local totalSurvivalTime = currentTime - playerData.survivalStartTime
+             if not self.scoreboard[userId] then
+                 self.scoreboard[userId] = {
+                     playerName = playerData.player.Name,
+                     catches = 0,
+                     caught = 0,
+                     survivalTime = 0,
+                     finalRole = "Survivor"
+                 }
+             end
+             self.scoreboard[userId].survivalTime = totalSurvivalTime
+             self.scoreboard[userId].finalRole = "Winner - Survived!"
+         end
+     end
+
+     -- Show final scoreboard with survival times
+     UIManager.showFinalScoreboard(self.scoreboard)
+
+     -- Reset after 15 seconds
+     task.wait(15)
+
+     if #Players:GetPlayers() >= 2 then
+         self:startGame()
+     end
 end
+
+-- Auto-initialize when script runs
+local function autoInitialize()
+     print("TagChaseGameManager starting up...")
+     
+     -- Wait for modules to be ready
+     task.wait(0.5)
+     
+     -- Create and initialize the game manager instance
+     local gameManager = TagChaseGameManager.new()
+     gameManager:initialize()
+     
+     print("TagChaseGameManager initialized successfully!")
+end
+
+-- Start the auto-initialization in a background task
+task.spawn(autoInitialize)
 
 return TagChaseGameManager

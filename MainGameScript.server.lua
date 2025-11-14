@@ -101,31 +101,30 @@ local function initializeGame()
      -- Load modules
      loadGameModules()
 
-     -- Initialize UI manager FIRST - before client scripts
-     local UIManager = require(script.Parent:FindFirstChild("UIManager"))
-     UIManager.initialize()
+     -- Initialize SpawnManager (ModuleScript) first
+     local SpawnManager = require(script.Parent:FindFirstChild("SpawnManager"))
+     if SpawnManager then
+         SpawnManager.initialize()
+         print("SpawnManager initialized")
+     else
+         warn("SpawnManager not found")
+     end
 
-     -- Setup player scripts after UI manager is ready
+     -- Initialize UIManager (ModuleScript)
+     local UIManager = require(script.Parent:FindFirstChild("UIManager"))
+     if UIManager then
+         UIManager.initialize()
+         print("UIManager initialized")
+     else
+         warn("UIManager not found")
+     end
+
+     -- Setup player scripts after modules are ready
      setupPlayerScripts()
 
-     -- Wait for game manager to be ready
-     local gameManager = script.Parent:FindFirstChild("TagChaseGameManager")
-     if gameManager then
-         -- Create and start game manager
-         local GameManager = require(gameManager)
-         local gameManagerInstance = GameManager.new()
-
-         -- Initialize spawn manager first
-         local SpawnManager = require(script.Parent:FindFirstChild("SpawnManager"))
-         SpawnManager.initialize()
-
-         -- Start the game
-         gameManagerInstance:initialize()
-
-         print("Game manager initialized and started!")
-     else
-         warn("Failed to initialize game - Game Manager not found")
-     end
+     -- TagChaseGameManager will run independently as a ServerScript
+     -- It will hook into the initialized systems
+     print("Game Manager will initialize independently")
 end
 
 -- Setup teams (optional, for future expansion)
