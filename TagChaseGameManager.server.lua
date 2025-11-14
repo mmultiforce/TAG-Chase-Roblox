@@ -12,9 +12,9 @@ local Workspace = game:GetService("Workspace")
 local DebrisService = game:GetService("Debris")
 
 -- Dependencies
-local RoleManager = require(script.Parent.RoleManager)
-local SpawnManager = require(script.Parent.SpawnManager)
-local UIManager = require(script.Parent.UIManager)
+local RoleManager = require(script.Parent:FindFirstChild("RoleManager"))
+local SpawnManager = require(script.Parent:FindFirstChild("SpawnManager"))
+local UIManager = require(script.Parent:FindFirstChild("UIManager"))
 
 -- Game Configuration
 local GAME_DURATION = 300 -- 5 minutes in seconds
