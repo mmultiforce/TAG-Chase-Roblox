@@ -11,7 +11,7 @@ local DebrisService = game:GetService("Debris")
 -- Spawn point storage
 local spawnPoints = {
     Chaser = {},
-    Runner = {}
+    Survivor = {}
 }
 
 -- Spawn zone configuration
@@ -38,13 +38,13 @@ function SpawnManager.createSpawnZones()
     local chaserZone = SpawnManager.createZone("ChaserZone", SPAWN_ZONE_SIZE, Vector3.new(0, 10, 0), BrickColor.new("Bright red"))
     chaserZone.Parent = spawnZones
     
-    -- Create Runner spawn zone (blue)
-    local runnerZone = SpawnManager.createZone("RunnerZone", SPAWN_ZONE_SIZE, Vector3.new(0, 10, SPAWN_ZONE_DISTANCE), BrickColor.new("Bright blue"))
-    runnerZone.Parent = spawnZones
+    -- Create Survivor spawn zone (green)
+    local survivorZone = SpawnManager.createZone("SurvivorZone", SPAWN_ZONE_SIZE, Vector3.new(0, 10, SPAWN_ZONE_DISTANCE), BrickColor.new("Bright green"))
+    survivorZone.Parent = spawnZones
     
     -- Create ground for both zones
     SpawnManager.createGround("ChaserGround", Vector3.new(60, 1, 60), Vector3.new(0, 0, 0), BrickColor.new("Dark stone"))
-    SpawnManager.createGround("RunnerGround", Vector3.new(60, 1, 60), Vector3.new(0, 0, SPAWN_ZONE_DISTANCE), BrickColor.new("Dark stone"))
+    SpawnManager.createGround("SurvivorGround", Vector3.new(60, 1, 60), Vector3.new(0, 0, SPAWN_ZONE_DISTANCE), BrickColor.new("Dark stone"))
     
     -- Create barriers between zones (initially)
     SpawnManager.createBarriers()
@@ -128,7 +128,7 @@ end
 function SpawnManager.createSpawnPoints()
     -- Clear existing spawn points
     spawnPoints.Chaser = {}
-    spawnPoints.Runner = {}
+    spawnPoints.Survivor = {}
     
     -- Create Chaser spawn points (in a circle)
     local chaserCenter = Vector3.new(0, 5, 0)
@@ -143,15 +143,15 @@ function SpawnManager.createSpawnPoints()
         table.insert(spawnPoints.Chaser, spawnPoint)
     end
     
-    -- Create Runner spawn points (in a grid)
-    local runnerCenter = Vector3.new(0, 5, SPAWN_ZONE_DISTANCE)
-    local runnerSpacing = 8
+    -- Create Survivor spawn points (in a grid)
+    local survivorCenter = Vector3.new(0, 5, SPAWN_ZONE_DISTANCE)
+    local survivorSpacing = 8
     
-    for x = -15, 15, runnerSpacing do
-        for z = -15, 15, runnerSpacing do
-            local spawnPoint = SpawnManager.createSpawnPoint("RunnerSpawn" .. #spawnPoints.Runner + 1, 
-                Vector3.new(runnerCenter.X + x, runnerCenter.Y, runnerCenter.Z + z))
-            table.insert(spawnPoints.Runner, spawnPoint)
+    for x = -15, 15, survivorSpacing do
+        for z = -15, 15, survivorSpacing do
+            local spawnPoint = SpawnManager.createSpawnPoint("SurvivorSpawn" .. #spawnPoints.Survivor + 1, 
+                Vector3.new(survivorCenter.X + x, survivorCenter.Y, survivorCenter.Z + z))
+            table.insert(spawnPoints.Survivor, spawnPoint)
         end
     end
 end

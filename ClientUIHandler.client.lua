@@ -40,17 +40,18 @@ local function updateUI(data)
     local roleLabel = tagChaseUI:FindFirstChild("RoleFrame"):FindFirstChild("RoleLabel")
     local timerLabel = tagChaseUI:FindFirstChild("RoleFrame"):FindFirstChild("TimerLabel")
     local chaserLabel = tagChaseUI:FindFirstChild("ChaserFrame"):FindFirstChild("ChaserLabel")
+    local statsLabel = tagChaseUI:FindFirstChild("RoleFrame"):FindFirstChild("StatsLabel")
     
     if roleLabel then
         if data.role == "Chaser" then
-            roleLabel.Text = "YOU ARE THE CHASER!"
+            roleLabel.Text = "TU ES LE CHASSEUR!"
             roleLabel.TextColor3 = Color3.new(1, 0, 0)
             tagChaseUI.RoleFrame.BackgroundColor3 = Color3.new(1, 0, 0)
             tagChaseUI.RoleFrame.BackgroundTransparency = 0.3
         else
-            roleLabel.Text = "YOU ARE RUNNING!"
-            roleLabel.TextColor3 = Color3.new(0, 0.5, 1)
-            tagChaseUI.RoleFrame.BackgroundColor3 = Color3.new(0, 0, 0.5)
+            roleLabel.Text = "TU SURVIS!"
+            roleLabel.TextColor3 = Color3.new(0, 1, 0)
+            tagChaseUI.RoleFrame.BackgroundColor3 = Color3.new(0, 0.5, 0)
             tagChaseUI.RoleFrame.BackgroundTransparency = 0.3
         end
     end
@@ -58,7 +59,7 @@ local function updateUI(data)
     if timerLabel then
         local minutes = math.floor(data.timeRemaining / 60)
         local seconds = data.timeRemaining % 60
-        timerLabel.Text = string.format("Time: %d:%02d", minutes, seconds)
+        timerLabel.Text = string.format("Temps: %d:%02d", minutes, seconds)
         
         -- Change color based on time remaining
         if data.timeRemaining <= 30 then
@@ -71,7 +72,18 @@ local function updateUI(data)
     end
     
     if chaserLabel then
-        chaserLabel.Text = "CHASER: " .. (data.currentChaser or "None")
+        local chaserText = "CHASSEURS: "
+        if data.currentChasers and #data.currentChasers > 0 then
+            chaserText = chaserText .. table.concat(data.currentChasers, ", ")
+        else
+            chaserText = chaserText .. "Aucun"
+        end
+        chaserLabel.Text = chaserText
+    end
+    
+    -- Update stats label if it exists
+    if statsLabel then
+        statsLabel.Text = string.format("Survivants: %d | Chasseurs: %d", data.survivorCount or 0, data.chaserCount or 0)
     end
 end
 
@@ -145,7 +157,7 @@ local function showScoreboard(scoreboardData)
             -- Name label
             local nameLabel = Instance.new("TextLabel")
             nameLabel.Name = "NameLabel"
-            nameLabel.Size = UDim2.new(0, 150, 1, 0)
+            nameLabel.Size = UDim2.new(0, 120, 1, 0)
             nameLabel.Position = UDim2.new(0, 50, 0, 0)
             nameLabel.BackgroundTransparency = 1
             nameLabel.Text = playerData.playerName
@@ -155,18 +167,33 @@ local function showScoreboard(scoreboardData)
             nameLabel.TextXAlignment = Enum.TextXAlignment.Left
             nameLabel.Parent = entryFrame
             
-            -- Stats label
-            local statsLabel = Instance.new("TextLabel")
-            statsLabel.Name = "StatsLabel"
-            statsLabel.Size = UDim2.new(0, 150, 1, 0)
-            statsLabel.Position = UDim2.new(0, 200, 0, 0)
-            statsLabel.BackgroundTransparency = 1
-            statsLabel.Text = "Tags: " .. playerData.tags .. " | Tagged: " .. playerData.tagged
-            statsLabel.TextColor3 = Color3.new(0.8, 0.8, 0.8)
-            statsLabel.TextScaled = true
-            statsLabel.Font = Enum.Font.SourceSans
-            statsLabel.TextXAlignment = Enum.TextXAlignment.Left
-            statsLabel.Parent = entryFrame
+            -- Role label
+            local roleLabel = Instance.new("TextLabel")
+            roleLabel.Name = "RoleLabel"
+            roleLabel.Size = UDim2.new(0, 100, 1, 0)
+            roleLabel.Position = UDim2.new(0, 170, 0, 0)
+            roleLabel.BackgroundTransparency = 1
+            roleLabel.Text = playerData.finalRole or "Survivor"
+            roleLabel.TextColor3 = Color3.new(0.8, 0.8, 0.8)
+            roleLabel.TextScaled = true
+            roleLabel.Font = Enum.Font.SourceSans
+            roleLabel.TextXAlignment = Enum.TextXAlignment.Left
+            roleLabel.Parent = entryFrame
+            
+            -- Survival time label
+            local survivalLabel = Instance.new("TextLabel")
+            survivalLabel.Name = "SurvivalLabel"
+            survivalLabel.Size = UDim2.new(0, 80, 1, 0)
+            survivalLabel.Position = UDim2.new(0, 270, 0, 0)
+            survivalLabel.BackgroundTransparency = 1
+            local minutes = math.floor(playerData.survivalTime / 60)
+            local seconds = math.floor(playerData.survivalTime % 60)
+            survivalLabel.Text = string.format("%d:%02d", minutes, seconds)
+            survivalLabel.TextColor3 = Color3.new(1, 1, 0)
+            survivalLabel.TextScaled = true
+            survivalLabel.Font = Enum.Font.SourceSans
+            survivalLabel.TextXAlignment = Enum.TextXAlignment.Left
+            survivalLabel.Parent = entryFrame
         end
         
         -- Update scrolling frame size

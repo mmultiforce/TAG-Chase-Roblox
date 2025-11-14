@@ -86,14 +86,26 @@ function UIManager.createMainGameUI()
     -- Timer Label
     local timerLabel = Instance.new("TextLabel")
     timerLabel.Name = "TimerLabel"
-    timerLabel.Size = UDim2.new(1, 0, 0.5, 0)
+    timerLabel.Size = UDim2.new(1, 0, 0.4, 0)
     timerLabel.Position = UDim2.new(0, 0, 0.5, 0)
     timerLabel.BackgroundTransparency = 1
-    timerLabel.Text = "Time: 5:00"
+    timerLabel.Text = "Temps: 5:00"
     timerLabel.TextColor3 = Color3.new(1, 1, 1)
     timerLabel.TextScaled = true
     timerLabel.Font = Enum.Font.SourceSans
     timerLabel.Parent = roleFrame
+    
+    -- Stats Label
+    local statsLabel = Instance.new("TextLabel")
+    statsLabel.Name = "StatsLabel"
+    statsLabel.Size = UDim2.new(1, 0, 0.1, 0)
+    statsLabel.Position = UDim2.new(0, 0, 0.9, 0)
+    statsLabel.BackgroundTransparency = 1
+    statsLabel.Text = "Survivants: 0 | Chasseurs: 0"
+    statsLabel.TextColor3 = Color3.new(0.8, 0.8, 0.8)
+    statsLabel.TextScaled = true
+    statsLabel.Font = Enum.Font.SourceSans
+    statsLabel.Parent = roleFrame
     
     -- Current Chaser Display
     local chaserFrame = Instance.new("Frame")
@@ -109,7 +121,7 @@ function UIManager.createMainGameUI()
     chaserLabel.Name = "ChaserLabel"
     chaserLabel.Size = UDim2.new(1, 0, 1, 0)
     chaserLabel.BackgroundTransparency = 1
-    chaserLabel.Text = "CHASER: None"
+    chaserLabel.Text = "CHASSEURS: Aucun"
     chaserLabel.TextColor3 = Color3.new(1, 1, 1)
     chaserLabel.TextScaled = true
     chaserLabel.Font = Enum.Font.SourceSansBold
@@ -187,21 +199,23 @@ function UIManager.createScoreboardUI()
     listLayout.Parent = scrollingFrame
 end
 
-function UIManager.updatePlayerUI(player, role, timeRemaining)
+function UIManager.updatePlayerUI(player, role, timeRemaining, survivorCount, chaserCount)
     if not player or not player.Parent == Players then return end
     
     -- Fire remote event to update player's UI
     remoteEvents.UpdateUI:FireClient(player, {
         role = role,
         timeRemaining = timeRemaining,
-        currentChaser = UIManager.getCurrentChaserName()
+        survivorCount = survivorCount or 0,
+        chaserCount = chaserCount or 0,
+        currentChasers = UIManager.getCurrentChaserNames()
     })
 end
 
-function UIManager.getCurrentChaserName()
+function UIManager.getCurrentChaserNames()
     -- This would be called from the game manager
     -- For now, return a placeholder
-    return "None"
+    return {"None"}
 end
 
 function UIManager.announceToAll(message)
@@ -227,9 +241,20 @@ function UIManager.showFinalScoreboard(scoreboard)
         table.insert(scoreboardArray, data)
     end
     
-    -- Sort by tags (descending)
+    -- Sort survivors first (by survival time), then others
     table.sort(scoreboardArray, function(a, b)
-        return a.tags > b.tags
+        -- Winners (survived) come first
+        if a.finalRole == "Winner - Survived!" and b.finalRole ~= "Winner - Survived!" then
+            return true
+        elseif a.finalRole ~= "Winner - Survived!" and b.finalRole == "Winner - Survived!" then
+            return false
+        end
+        -- Among survivors, longer survival time first
+        if a.finalRole == "Winner - Survived!" and b.finalRole == "Winner - Survived!" then
+            return a.survivalTime > b.survivalTime
+        end
+        -- Among caught, longer survival time first
+        return a.survivalTime > b.survivalTime
     end)
     
     -- Send to all players
@@ -248,7 +273,7 @@ function UIManager.getRoleColor(role)
     if role == "Chaser" then
         return Color3.new(1, 0, 0)
     else
-        return Color3.new(0, 0.5, 1)
+        return Color3.new(0, 1, 0)
     end
 end
 

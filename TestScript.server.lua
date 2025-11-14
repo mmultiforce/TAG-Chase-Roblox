@@ -9,7 +9,7 @@ local TestScript = {}
 
 function TestScript.runAllTests()
     print("========================================")
-    print("    RUNNING TAG/CHASE GAME TESTS")
+    print("    RUNNING PROGRESSIVE TAG/CHASE TESTS")
     print("========================================")
     
     local tests = {
@@ -42,7 +42,7 @@ function TestScript.runAllTests()
     print("========================================")
     
     if passedTests == totalTests then
-        print("🎉 All tests passed! Game is ready to play.")
+        print("🎉 All tests passed! Progressive TAG/CHASE game is ready to play.")
     else
         print("⚠️  Some tests failed. Check the setup guide.")
     end
@@ -139,22 +139,22 @@ function TestScript.testSpawnZones()
     end
     
     local chaserZone = spawnZones:FindFirstChild("ChaserZone")
-    local runnerZone = spawnZones:FindFirstChild("RunnerZone")
+    local survivorZone = spawnZones:FindFirstChild("SurvivorZone")
     
-    if not chaserZone or not runnerZone then
+    if not chaserZone or not survivorZone then
         return "Missing spawn zones"
     end
     
     -- Check if spawn points exist
     local chaserSpawns = 0
-    local runnerSpawns = 0
+    local survivorSpawns = 0
     
     for _, part in ipairs(Workspace:GetChildren()) do
         if part:IsA("SpawnLocation") then
             if part.Name:match("ChaserSpawn") then
                 chaserSpawns = chaserSpawns + 1
-            elseif part.Name:match("RunnerSpawn") then
-                runnerSpawns = runnerSpawns + 1
+            elseif part.Name:match("SurvivorSpawn") then
+                survivorSpawns = survivorSpawns + 1
             end
         end
     end
@@ -163,11 +163,11 @@ function TestScript.testSpawnZones()
         return "No chaser spawn points found"
     end
     
-    if runnerSpawns == 0 then
-        return "No runner spawn points found"
+    if survivorSpawns == 0 then
+        return "No survivor spawn points found"
     end
     
-    return "Spawn zones test passed (" .. chaserSpawns .. " chaser, " .. runnerSpawns .. " runner spawns)"
+    return "Spawn zones test passed (" .. chaserSpawns .. " chaser, " .. survivorSpawns .. " survivor spawns)"
 end
 
 function TestScript.testUIComponents()

@@ -13,14 +13,14 @@ local playerRoles = {}
 -- Role colors for visual identification
 local ROLE_COLORS = {
     Chaser = BrickColor.new("Bright red"),
-    Runner = BrickColor.new("Bright blue")
+    Survivor = BrickColor.new("Bright green")
 }
 
 function RoleManager.setRole(player, role)
     if not player or not role then return end
     
     -- Validate role
-    if role ~= "Chaser" and role ~= "Runner" then
+    if role ~= "Chaser" and role ~= "Survivor" then
         warn("Invalid role: " .. tostring(role))
         return
     end
@@ -38,9 +38,9 @@ function RoleManager.setRole(player, role)
 end
 
 function RoleManager.getRole(player)
-    if not player then return "Runner" end
+    if not player then return "Survivor" end
     
-    return playerRoles[player.UserId] or "Runner"
+    return playerRoles[player.UserId] or "Survivor"
 end
 
 function RoleManager.applyRoleVisuals(character, role)
@@ -86,11 +86,11 @@ function RoleManager.applyRoleVisuals(character, role)
             bodyColors.LeftLegColor = ROLE_COLORS.Chaser
             bodyColors.RightLegColor = ROLE_COLORS.Chaser
         else
-            bodyColors.TorsoColor = ROLE_COLORS.Runner
-            bodyColors.LeftArmColor = ROLE_COLORS.Runner
-            bodyColors.RightArmColor = ROLE_COLORS.Runner
-            bodyColors.LeftLegColor = ROLE_COLORS.Runner
-            bodyColors.RightLegColor = ROLE_COLORS.Runner
+            bodyColors.TorsoColor = ROLE_COLORS.Survivor
+            bodyColors.LeftArmColor = ROLE_COLORS.Survivor
+            bodyColors.RightArmColor = ROLE_COLORS.Survivor
+            bodyColors.LeftLegColor = ROLE_COLORS.Survivor
+            bodyColors.RightLegColor = ROLE_COLORS.Survivor
         end
     end
     
@@ -118,27 +118,27 @@ function RoleManager.getAllChasers()
     return chasers
 end
 
-function RoleManager.getAllRunners()
-    local runners = {}
+function RoleManager.getAllSurvivors()
+    local survivors = {}
     
     for userId, role in pairs(playerRoles) do
-        if role == "Runner" then
+        if role == "Survivor" then
             local player = Players:GetPlayerByUserId(userId)
             if player and player.Parent == Players then
-                table.insert(runners, player)
+                table.insert(survivors, player)
             end
         end
     end
     
-    return runners
+    return survivors
 end
 
 function RoleManager.resetAllRoles()
     playerRoles = {}
     
-    -- Set all players to runners initially
+    -- Set all players to survivors initially
     for _, player in ipairs(Players:GetPlayers()) do
-        RoleManager.setRole(player, "Runner")
+        RoleManager.setRole(player, "Survivor")
     end
 end
 

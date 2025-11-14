@@ -1,31 +1,38 @@
-# TAG-Chase-Roblox
+# TAG-Chase-Roblox - Version Progressive Chase
 
-A complete TAG/CHASE game implementation for Roblox with core gameplay mechanics, role management, and UI systems.
+A complete TAG/CHASE game implementation for Roblox with progressive chase mechanics - when a survivor gets caught, they become a chaser too!
 
 ## Game Overview
 
-TAG/CHASE is a multiplayer game where players take turns being the "Chaser" who tries to catch "Runners". When a Chaser catches a Runner, they switch roles. The game features a 5-minute round system with scoring and visual feedback.
+TAG/CHASE Progressive est un jeu multijoueur où un chasseur initial doit attraper les survivants. **La particularité : quand un survivant se fait attraper, il devient chasseur à son tour !** Cela crée une dynamique intense où le nombre de chasseurs augmente progressivement. Le jeu suit le temps de survie de chaque joueur et affiche un classement détaillé à la fin.
 
 ## Features
 
 ### Core Gameplay
-- **Player Role System**: Random player selection as Chaser, others as Runners
-- **Spawning System**: Separate spawn zones for Chasers (red) and Runners (blue)
-- **Grace Period**: 5-second grace period before Chaser can move
-- **Collision Detection**: Automatic role switching when Chaser touches Runner
-- **Game Loop**: 5-minute rounds with automatic restart
+- **Système de Rôles Progressif**: Un chasseur initial sélectionné aléatoirement, tous les autres sont des survivants
+- **Mécanique de Contagion**: Quand un survivant se fait attraper, il devient chasseur immédiatement !
+- **Système de Spawn**: Zones séparées pour les chasseurs (rouge) et les survivants (vert)
+- **Période de Grâce**: 5 secondes avant que le premier chasseur puisse bouger
+- **Détection de Collision**: Conversion automatique en chasseur au contact
+- **Boucle de Jeu**: Parties de 5 minutes avec fin automatique (quand tous sont attrapés ou temps écoulé)
 
-### Visual Features
-- **Role Indicators**: Color-coded players (red for Chaser, blue for Runners)
-- **Spawn Zones**: Clearly marked areas with visual boundaries
-- **UI Elements**: Real-time role display, timer, and current Chaser information
-- **Announcements**: In-game notifications for role changes and game events
+### Système de Survie
+- **Temps de Survie**: Suivi précis du temps de survie de chaque joueur
+- **Conversion Progressive**: Les survivants deviennent chasseurs en se faisant attraper
+- **Fin Dynamique**: Le jeu se termine quand tous les survivants sont attrapés
+- **Classement Détaillé**: Affiche le temps de survie, le rôle final et les statistiques
 
-### UI System
-- **Role Display**: Shows current player role prominently
-- **Countdown Timer**: Displays remaining game time
-- **Chaser Indicator**: Shows who is currently the Chaser
-- **Scoreboard**: End-game statistics showing tags and role changes
+### Features Visuelles
+- **Indicateurs de Rôle**: Joueurs codés par couleur (rouge pour chasseurs, vert pour survivants)
+- **Zones de Spawn**: Zones clairement marquées avec bordures visuelles
+- **UI Temps Réel**: Affiche le rôle actuel, le timer, et le nombre de chasseurs/survivants
+- **Annonces**: Notifications pour les conversions et événements du jeu
+
+### Système UI
+- **Affichage de Rôle**: Montre "TU ES LE CHASSEUR!" ou "TU SURVIS!" en français
+- **Timer de Partie**: Affiche le temps restant en français
+- **Compteur Dynamique**: Montre en temps réel le nombre de survivants et chasseurs
+- **Tableau des Scores**: Statistiques finales avec temps de survie et classement
 
 ## File Structure
 
@@ -80,65 +87,71 @@ To test the game:
 
 ## Game Mechanics
 
-### Starting the Game
-- Game automatically starts when 2+ players join
-- One random player is selected as the initial Chaser
-- 5-second grace period before gameplay begins
+### Démarrage du Jeu
+- Le jeu démarre automatiquement quand 2+ joueurs rejoignent
+- Un joueur aléatoire est sélectionné comme chasseur initial
+- Période de grâce de 5 secondes avant le début
 
-### Role Switching
-- When Chaser touches a Runner, roles immediately switch
-- New Chaser teleports to Chaser spawn zone
-- New Runner teleports to Runner spawn zone
-- Visual and audio feedback plays for all players
+### Mécanique de Conversion
+- Quand un chasseur touche un survivant, le survivant devient chasseur immédiatement
+- Le nouveau chasseur est téléporté dans la zone des chasseurs
+- Les annonces en français informent tous les joueurs
+- Le nombre de chasseurs augmente progressivement !
 
-### Scoring System
-- **Tags**: Number of players caught as Chaser
-- **Tagged**: Number of times caught as Runner
-- **Role Changes**: Total times switched roles
-- Final scoreboard displays at game end
+### Système de Survie et Scoring
+- **Temps de Survie**: Suivi précis pour chaque joueur
+- **Rôle Final**: "Winner - Survived!" pour ceux qui restent jusqu'à la fin
+- **Attrapé**: Temps de survie enregistré au moment de la conversion
+- **Classement**: Les survivants sont classés par temps de survie
 
-### Visual Indicators
-- **Chaser**: Red color with glowing indicator
-- **Runner**: Blue color with distinct indicator
-- **Spawn Zones**: Color-coded areas (red/blue)
-- **UI Updates**: Real-time role and timer information
+### Fin de Partie
+- Le jeu se termine quand tous les survivants sont attrapés OU après 5 minutes
+- Les survivants restants sont déclarés gagnants
+- Tableau des scores affiche le temps de survie de chacun
+
+### Indicateurs Visuels
+- **Chasseur**: Couleur rouge avec indicateur lumineux
+- **Survivant**: Couleur verte avec indicateur distinct
+- **Zones de Spawn**: Zones codées par couleur (rouge/vert)
+- **UI en Temps Réel**: Compteurs de survivants/chasseurs et timer
 
 ## Technical Implementation
 
 ### Server Scripts
-- **MainGameScript**: Initializes game structure and starts game manager
-- **TagChaseGameManager**: Core game logic, collision detection, and state management
-- **RoleManager**: Handles role assignment and visual indicators
-- **SpawnManager**: Creates spawn zones and manages player spawning
-- **UIManager**: Manages RemoteEvents and server-side UI updates
+- **MainGameScript**: Initialise la structure du jeu et démarre le game manager
+- **TagChaseGameManager**: Logique principale avec détection de collision et gestion de la conversion progressive
+- **RoleManager**: Gestion des rôles (Chasseur/Survivant) et indicateurs visuels
+- **SpawnManager**: Création des zones de spawn et gestion des téléportations
+- **UIManager**: Gestion des RemoteEvents et mise à jour UI côté serveur
 
 ### Client Scripts
-- **ClientUIHandler**: Updates player UI based on server events
-- Handles role display, timer updates, and announcements
+- **ClientUIHandler**: Mise à jour de l'UI joueur basée sur les événements serveur
+- Gère l'affichage des rôles, le timer, et les annonces en français
 
 ### Communication
-- Uses RemoteEvents for client-server communication
-- Real-time UI updates for all players
-- Efficient event-driven architecture
+- Utilise RemoteEvents pour la communication client-serveur
+- Mises à jour UI en temps réel pour tous les joueurs
+- Architecture événementielle efficace pour la gestion progressive
 
 ## Customization
 
 ### Game Settings
-Edit `GAME_CONFIG` in `MainGameScript.server.lua`:
+Modifiez `GAME_CONFIG` dans `MainGameScript.server.lua`:
 ```lua
 local GAME_CONFIG = {
-    GAME_DURATION = 300, -- Change game length
-    GRACE_PERIOD = 5,     -- Change grace period
-    SPAWN_ZONES_SEPARATION = 100, -- Change zone distance
-    CHASER_COLOR = BrickColor.new("Bright red"),    -- Change colors
-    RUNNER_COLOR = BrickColor.new("Bright blue")
+    GAME_DURATION = 300, -- Durée de la partie en secondes
+    GRACE_PERIOD = 5,     -- Période de grâce avant début
+    SPAWN_ZONES_SEPARATION = 100, -- Distance entre zones
+    CHASER_COLOR = BrickColor.new("Bright red"),    -- Couleur chasseurs
+    SURVIVOR_COLOR = BrickColor.new("Bright green")  -- Couleur survivants
 }
 ```
 
 ### Visual Customization
-- Modify colors in `RoleManager.module.lua`
-- Adjust spawn zone sizes in `SpawnManager.module.lua`
-- Customize UI elements in `UIManager.module.lua`
+- Modifiez les couleurs dans `RoleManager.module.lua` (rouge/vert)
+- Ajustez tailles des zones dans `SpawnManager.module.lua`
+- Personnalisez les éléments UI dans `UIManager.module.lua`
+- Modifiez les textes français dans `ClientUIHandler.client.lua`
 
 ## Troubleshooting
 
@@ -173,14 +186,15 @@ local GAME_CONFIG = {
 
 ## Future Enhancements
 
-Potential features to add:
-- Power-ups and abilities
-- Different game modes
-- Leaderboards and statistics
-- Customizable characters
-- Sound effects and music
-- Maps with obstacles
-- Team-based variations
+Fonctionnalités potentielles à ajouter:
+- Power-ups et capacités spéciales pour les survivants
+- Différents modes de jeu (élimination, points, etc.)
+- Tableaux des scores persistants et statistiques détaillées
+- Personnalisations avancées des personnages
+- Effets sonores et musique dynamique
+- Cartes avec obstacles et zones spéciales
+- Variations en équipe (chasseurs vs survivants)
+- Système de niveaux et progression
 
 ## Support
 
@@ -192,6 +206,7 @@ For issues or questions:
 
 ---
 
-**Game Version**: 1.0.0  
-**Last Updated**: 2024  
-**Compatible**: Roblox Studio (Latest Version)
+**Version du Jeu**: 2.0.0 - Progressive Chase  
+**Dernière Mise à Jour**: 2024  
+**Compatible**: Roblox Studio (Dernière Version)  
+**Nouvelles Fonctionnalités**: Système de chasse progressive, temps de survie, UI en français
